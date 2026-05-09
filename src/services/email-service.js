@@ -2,45 +2,66 @@ import nodemailer from "nodemailer"
 
 export const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: false,
+
+    // convert string -> number
+    port: Number(process.env.SMTP_PORT),
+
+    // true only for 465
+    secure: Number(process.env.SMTP_PORT) === 465,
+
     auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
     }
 })
 
-export async function sendRoomInviteEmail({ to, roomId, startTime, endTime })
-{
-    await transporter.sendMail({
+export async function sendRoomInviteEmail({
+    to,
+    roomId,
+    startTime,
+    endTime
+}) {
+    try {
 
-        from: process.env.SMTP_USER,
+        // check smtp connection
+        await transporter.verify();
 
-        to,
+        const info = await transporter.sendMail({
 
-        subject: "Interview Room Invitation",
+            from: `"Interview Platform" <${process.env.SMTP_USER}>`,
 
-        html: `
-            <h2>Interview Invitation</h2>
+            to,
 
-            <p>
-                You have been invited
-                to an interview session.
-            </p>
+            subject: "Interview Room Invitation",
 
-            <p>
-                Room ID: ${roomId}
-            </p>
+            html: `
+                <h2>Interview Invitation</h2>
 
-            <p>
-                Start:
-                ${new Date(startTime)}
-            </p>
+                <p>
+                    You have been invited
+                    to an interview session.
+                </p>
 
-            <p>
-                End:
-                ${new Date(endTime)}
-            </p>
-        `
-    })
+                <p>
+                    <b>Room ID:</b> ${roomId}
+                </p>
+
+                <p>
+                    <b>Start:</b>
+                    ${new Date(startTime).toLocaleString()}
+                </p>
+
+                <p>
+                    <b>End:</b>
+                    ${new Date(endTime).toLocaleString()}
+                </p>
+            `
+        });
+
+        console.log("EMAIL SENT:", info.messageId);
+
+    } catch (err) {
+
+        console.log("EMAIL ERROR:", err);
+    }
 }
