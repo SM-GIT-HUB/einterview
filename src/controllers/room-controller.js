@@ -28,10 +28,10 @@ export async function createRoom(req, res)
         }
 
         const start =
-            new Date(startTime).getTime();
+            new Date(startTime + ":00").getTime();
 
         const end =
-            new Date(endTime).getTime();
+            new Date(endTime + ":00").getTime();
 
         const now = Date.now();
 
