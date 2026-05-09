@@ -14,7 +14,7 @@ export async function sendRoomInviteEmail({ to, roomId, startTime, endTime })
 {
     await transporter.sendMail({
 
-        from: process.env.EMAIL_USER,
+        from: process.env.SMTP_USER,
 
         to,
 
