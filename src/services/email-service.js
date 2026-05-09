@@ -1,17 +1,20 @@
 import nodemailer from "nodemailer"
 
 export const transporter = nodemailer.createTransport({
+
     host: process.env.SMTP_HOST,
 
-    // convert string -> number
     port: Number(process.env.SMTP_PORT),
 
-    // true only for 465
-    secure: Number(process.env.SMTP_PORT) === 465,
+    secure: false,
 
     auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
+    },
+
+    tls: {
+        rejectUnauthorized: false
     }
 })
 
@@ -24,7 +27,7 @@ export async function sendRoomInviteEmail({
     try {
 
         // check smtp connection
-        await transporter.verify();
+        // await transporter.verify();
 
         const info = await transporter.sendMail({
 
