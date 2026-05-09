@@ -13,8 +13,13 @@ import roomRoutes from "./routes/room-routes.js"
 
 const app = express();
 
+// app.use(cors({
+//     origin: process.env.CLIENT_URL,
+//     credentials: true
+// }))
+
 app.use(cors({
-    origin: process.env.CLIENT_URL,
+    origin: true,
     credentials: true
 }))
 
@@ -658,9 +663,16 @@ const PORT = process.env.PORT || 3000;
 
 const server = http.createServer(app);
 
+// const io = new Server(server, {
+//     cors: {
+//         origin: process.env.CLIENT_URL,
+//         credentials: true
+//     }
+// })
+
 const io = new Server(server, {
     cors: {
-        origin: process.env.CLIENT_URL,
+        origin: true,
         credentials: true
     }
 })
@@ -678,17 +690,20 @@ server.listen(PORT, () => {
 import nodemailer from "nodemailer"
 
 export const transporter = nodemailer.createTransport({
+
     host: process.env.SMTP_HOST,
 
-    // convert string -> number
     port: Number(process.env.SMTP_PORT),
 
-    // true only for 465
-    secure: Number(process.env.SMTP_PORT) === 465,
+    secure: false,
 
     auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
+    },
+
+    tls: {
+        rejectUnauthorized: false
     }
 })
 
@@ -701,7 +716,7 @@ export async function sendRoomInviteEmail({
     try {
 
         // check smtp connection
-        await transporter.verify();
+        // await transporter.verify();
 
         const info = await transporter.sendMail({
 

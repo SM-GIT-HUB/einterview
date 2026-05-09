@@ -1,22 +1,24 @@
 import nodemailer from "nodemailer"
 
-export const transporter = nodemailer.createTransport({
+export const transporter =
+    nodemailer.createTransport({
 
-    host: process.env.SMTP_HOST,
+        host:
+            process.env.SMTP_HOST,
 
-    port: Number(process.env.SMTP_PORT),
+        port:
+            Number(process.env.SMTP_PORT),
 
-    secure: false,
+        secure: false,
 
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-    },
+        auth: {
+            user:
+                process.env.SMTP_USER,
 
-    tls: {
-        rejectUnauthorized: false
-    }
-})
+            pass:
+                process.env.SMTP_PASS
+        }
+    })
 
 export async function sendRoomInviteEmail({
     to,
@@ -26,45 +28,53 @@ export async function sendRoomInviteEmail({
 }) {
     try {
 
-        // check smtp connection
-        // await transporter.verify();
+        const info =
+            await transporter.sendMail({
 
-        const info = await transporter.sendMail({
+                from: `"E-Interview" <examprosys@gmail.com>`,
 
-            from: `"Interview Platform" <${process.env.SMTP_USER}>`,
+                to,
 
-            to,
+                subject:
+                    "Interview Room Invitation",
 
-            subject: "Interview Room Invitation",
+                html: `
+                    <h2>
+                        Interview Invitation
+                    </h2>
 
-            html: `
-                <h2>Interview Invitation</h2>
+                    <p>
+                        You have been invited
+                        to an interview session.
+                    </p>
 
-                <p>
-                    You have been invited
-                    to an interview session.
-                </p>
+                    <p>
+                        <b>Room ID:</b>
+                        ${roomId}
+                    </p>
 
-                <p>
-                    <b>Room ID:</b> ${roomId}
-                </p>
+                    <p>
+                        <b>Start:</b>
+                        ${new Date(startTime).toLocaleString()}
+                    </p>
 
-                <p>
-                    <b>Start:</b>
-                    ${new Date(startTime).toLocaleString()}
-                </p>
+                    <p>
+                        <b>End:</b>
+                        ${new Date(endTime).toLocaleString()}
+                    </p>
+                `
+            })
 
-                <p>
-                    <b>End:</b>
-                    ${new Date(endTime).toLocaleString()}
-                </p>
-            `
-        });
-
-        console.log("EMAIL SENT:", info.messageId);
+        console.log(
+            "EMAIL SENT:",
+            info.messageId
+        )
 
     } catch (err) {
 
-        console.log("EMAIL ERROR:", err);
+        console.log(
+            "EMAIL ERROR:",
+            err
+        )
     }
 }
