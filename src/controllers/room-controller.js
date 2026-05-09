@@ -66,12 +66,12 @@ export async function createRoom(req, res)
         //
         // fire and forget email
         //
-        await sendRoomInviteEmail({
+        sendRoomInviteEmail({
             to: participantEmail,
             roomId: room.roomId,
             startTime,
             endTime
-        })
+        }).catch(console.log)
 
         return res.status(201).json({
             message: "Room created",
