@@ -1,23 +1,9 @@
-import nodemailer from "nodemailer"
+import { BrevoClient } from "@getbrevo/brevo"
 
-export const transporter =
-    nodemailer.createTransport({
-
-        host:
-            process.env.SMTP_HOST,
-
-        port:
-            Number(process.env.SMTP_PORT),
-
-        secure: false,
-
-        auth: {
-            user:
-                process.env.SMTP_USER,
-
-            pass:
-                process.env.SMTP_PASS
-        }
+const client =
+    new BrevoClient({
+        apiKey:
+            process.env.BREVO_API_KEY
     })
 
 export async function sendRoomInviteEmail({
@@ -28,17 +14,26 @@ export async function sendRoomInviteEmail({
 }) {
     try {
 
-        const info =
-            await transporter.sendMail({
+        const response =
+            await client
+            .transactionalEmails
+            .sendTransacEmail({
 
-                from: `"E-Interview" <examprosys@gmail.com>`,
+                sender: {
+                    name: "E-Interview",
+                    email: "examprosys@gmail.com"
+                },
 
-                to,
+                to: [
+                    {
+                        email: to
+                    }
+                ],
 
                 subject:
                     "Interview Room Invitation",
 
-                html: `
+                htmlContent: `
                     <h2>
                         Interview Invitation
                     </h2>
@@ -65,16 +60,11 @@ export async function sendRoomInviteEmail({
                 `
             })
 
-        console.log(
-            "EMAIL SENT:",
-            info.messageId
-        )
+        console.log(response);
 
-    } catch (err) {
+    }
+    catch(err) {
 
-        console.log(
-            "EMAIL ERROR:",
-            err
-        )
+        console.log(err);
     }
 }
