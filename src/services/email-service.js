@@ -1,13 +1,14 @@
 import nodemailer from "nodemailer"
 
-const transporter =
-    nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
-    })
+export const transporter = nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: false,
+    auth: {
+        user: SMTP_USER,
+        pass: SMTP_PASS,
+    }
+})
 
 export async function sendRoomInviteEmail({ to, roomId, startTime, endTime })
 {

@@ -825,6 +825,14 @@ function initializeSocket(io)
                 socket.id
             )
         })
+
+        socket.on("disconnecting", () => {
+            for (const roomId of socket.rooms) {
+                if (roomId !== socket.id) {
+                    socket.to(roomId).emit("peer-left");
+                }
+            }
+        })
     })
 }
 
